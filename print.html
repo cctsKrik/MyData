@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Порядок страниц для брошюры</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin-top: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Введите количество страниц</h1>
+<input type="number" id="pageCount" placeholder="Количество страниц" min="1">
+<button id="submitButton">Сгенерировать порядок</button>
+
+<div id="result"></div>
+
+<script>
+    function generateBookletOrder(pages) {
+        const totalPages = Math.ceil(pages / 4) * 4;
+        const order = [];
+
+        /*for (let i = 0; i < totalPages / 4; i++) {
+            order.push(totalPages - (i * 2)); // левая страница
+            order.push((i * 2) + 1); // правая страница
+            order.push((i * 2) + 2); // правая страница
+            order.push(totalPages - (i * 2) - 1); // левая страница
+        }
+
+        // Удаляем страницы, которые превышают введённое количество
+        const filteredOrder = order.filter(page => page <= pages);
+
+        // Разделяем на стороны
+        const side1 = filteredOrder.filter((_, index) => index % 2 === 0);
+        const side2 = filteredOrder.filter((_, index) => index % 2 === 1);*/
+		let side1 = [];
+		let side2 = [];
+		
+		for(let i = 1; i <= totalPages / 4; i++){
+			side1.push(totalPages - (i - 1) * 2);
+			side1.push(i * 2 - 1);
+			side2.push(i * 2);
+			side2.push(totalPages - (i - 1) * 2 - 1);
+		}
+		
+        return { side1, side2 };
+    }
+
+    document.getElementById('submitButton').addEventListener('click', function() {
+        const inputValue = parseInt(document.getElementById('pageCount').value);
+        if (isNaN(inputValue) || inputValue < 1) {
+            document.getElementById('result').textContent = 'Пожалуйста, введите корректное количество страниц.';
+            return;
+        }
+        
+        const { side1, side2 } = generateBookletOrder(inputValue);
+        const outputSide1 = side1.join(',');
+        const outputSide2 = side2.join(',');
+
+        document.getElementById('result').innerHTML = `
+            <strong>Сторона 1:</strong> ${outputSide1}<br>
+            <strong>Сторона 2:</strong> ${outputSide2}
+        `;
+    });
+</script>
+
+</body>
+</html>
